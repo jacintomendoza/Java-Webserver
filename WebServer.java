@@ -37,10 +37,24 @@ public final class WebServer
 }
 
 
+
+
 // Establish the listen socket
 // Code that runs whenenver running a thread
 final class HttpRequest implements Runnable
 {
+  private static void sendBytes(FileInputStream fis, OutputStream os) throws Exception
+  {
+    // Construct a 1k buffer to hold bytes on their way to Socket
+    byte[] buffer = new byte[1024];
+    int bytes = 0;
+
+    // Copy requested file into the socket's output stream
+    while((bytes = fis.read(buffer)) != -1)
+    {
+      os.write(buffer, 0, bytes);
+    }
+  }
   // Used to terminate each line of server response message
   final static String CRLF = "\r\n";
   Socket socket;
@@ -112,6 +126,7 @@ final class HttpRequest implements Runnable
     try
     {
       fis = new FileInputStream(fileName);
+
     }
     catch (FileNotFoundException e)
     {
@@ -133,6 +148,12 @@ final class HttpRequest implements Runnable
       //contentTypeLine @@@@@@@
       entityBody = "<HTML>" + "<HEAD><TITLE>Not Found</TITLE></HEAD>" + "<BODY>Not Found</BODY></HTML>";
     }
+
+    os.writeBytes("TEST");
+    os.writeBytes("\r\n");
+    //sendBytes(fis, os);
+
+    os.close();
 
   }
 }
